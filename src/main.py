@@ -1,10 +1,9 @@
 from textnode import TextType, TextNode
-from htmlnode import LeafNode
+from inline_markdown import split_nodes_delimiter
 
 def main():
-    my_text_node = TextNode("some link text", TextType.LINK, "https://www.boot.dev")
-    print(my_text_node)
-    node = LeafNode("p", "Hello, world!", {"class": "test", "id": "dont-care"})
-    print(node.to_html())
+    node = TextNode("This is text with a `code block` word", TextType.TEXT)
+    new_nodes = split_nodes_delimiter([node], "`", TextType.CODE)
+    print(new_nodes)
 
 main()
