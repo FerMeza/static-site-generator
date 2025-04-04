@@ -50,7 +50,7 @@ def split_nodes_link(old_nodes : list[TextNode]):
                     new_nodes.append(TextNode(content, TextType.LINK, href))
                     remainder_text = sections[1]
                 if remainder_text != "":
-                    new_nodes.append(TextNode(remainder_text), TextType.TEXT)                    
+                    new_nodes.append(TextNode(remainder_text, TextType.TEXT))                    
     return new_nodes
 
 
@@ -76,5 +76,14 @@ def split_nodes_image(old_nodes : list[TextNode]):
                     new_nodes.append(TextNode(alt, TextType.IMAGE, src))
                     remainder_text = sections[1]
                 if remainder_text != "":
-                    new_nodes.append(TextNode(remainder_text), TextType.TEXT)                    
+                    new_nodes.append(TextNode(remainder_text, TextType.TEXT))                    
     return new_nodes
+
+def text_to_textnodes(text):
+    nodes = [TextNode(text, TextType.TEXT)]
+    nodes = split_nodes_delimiter(nodes, "`", TextType.CODE)
+    nodes = split_nodes_delimiter(nodes, "**", TextType.BOLD)
+    nodes = split_nodes_delimiter(nodes, "_", TextType.ITALIC)
+    nodes = split_nodes_link(nodes)
+    nodes = split_nodes_image(nodes)
+    return nodes
