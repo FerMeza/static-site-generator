@@ -20,7 +20,6 @@ def block_to_html_node(block: str, block_type: BlockType) -> ParentNode:
     match block_type:
         case BlockType.CODE:
             text = block.strip("```").lstrip("\n")
-            print(repr(text.splitlines()))
             text_node = TextNode(text, TextType.CODE)
             code = text_node_to_html_node(text_node)
             return ParentNode("pre", [code])
