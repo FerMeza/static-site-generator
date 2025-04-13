@@ -1,18 +1,16 @@
-from block_markdown import markdown_to_blocks
+from markdown_to_hmtl_node import markdown_to_html_node
 
 def main():
-    print(len(markdown_to_blocks("""
-This is **bolded** paragraph              
+    md = """
+```
+This is text that _should_ remain
+the **same** even with inline stuff
+```
+"""
 
-This is another paragraph with _italic_ text and `code` here
-This is the same paragraph on a new line
-
-                                                          
-- This is a list
-
-                                                   
-- with items
-""")))
+    node = markdown_to_html_node(md)
+    html = node.to_html()
+    print(repr(html))
 
 if __name__ == "__main__":
     main()

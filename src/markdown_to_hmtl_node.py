@@ -18,15 +18,18 @@ def markdown_to_html_node(markdown: str) -> ParentNode:
 
 def block_to_html_node(block: str, block_type: BlockType) -> ParentNode:
     match block_type:
-        case BlockType.BlockType.CODE:
-            return text_node_to_html_node(TextNode(block.strip("```"), TextType.CODE))
-        case BlockType.BlockType.HEADING:
+        case BlockType.CODE:
+            text = block.strip("```").lstrip("\n")
+            print(repr(text.splitlines()))
+            text_node = TextNode(text, TextType.CODE)
+            return text_node_to_html_node(text_node)
+        case BlockType.HEADING:
             splited = block.split(" ", 1)
             return ParentNode(
                 f"h{len(splited[0])}",
                 text_to_children(splited[1]),
             )
-        case BlockType.BlockType.ORDERED_LIST:
+        case BlockType.ORDERED_LIST:
             parent = ParentNode("ol",[])
             for line in block.split("\n"):
                 text = line.split(" ", 1)[1]
@@ -36,17 +39,17 @@ def block_to_html_node(block: str, block_type: BlockType) -> ParentNode:
                         text_to_children(text))
                 )
             return parent
-        case BlockType.BlockType.PARAGRAPH:
+        case BlockType.PARAGRAPH:
             return ParentNode(
                 "p",
                 text_to_children(block),
             )
-        case BlockType.BlockType.QUOTE:
+        case BlockType.QUOTE:
             parent = ParentNode("blockquote")
             text = reduce(lambda x, y: x + y + "\n", map(lambda line : line[1:], block.splitlines()), "")
             parent.children = text_to_children[text[:-1]]
             return parent
-        case BlockType.BlockType.UNORDERED_LIST:
+        case BlockType.UNORDERED_LIST:
             parent = ParentNode("ul",[])
             for line in block.split("\n"):
                 text = line.split(" ", 1)[1]
@@ -58,9 +61,9 @@ def block_to_html_node(block: str, block_type: BlockType) -> ParentNode:
             return parent
         case _:
             raise ValueError("Not a valid Block Type")
-        
+
+# I'm asumming nothing can be nested!, so it's all inline!
 def text_to_children(text: str) -> list[LeafNode]:
-    blocks = markdown_to_blocks(text)
-    # I'm asumming nothing can be nested!, so it's all inline!
-    text_nodes = text_to_textnodes(blocks)
-    return list(map(lambda text_node : text_node_to_html_node(text_node), text_nodes))
+    text_nodes = text_to_textnodes(" ".join(text.split()))
+    children = list(map(lambda text_node : text_node_to_html_node(text_node), text_nodes))
+    return children
