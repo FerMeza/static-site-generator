@@ -1,16 +1,12 @@
-from markdown_to_hmtl_node import markdown_to_html_node
+from os import path
+from pathlib import Path
+from website import copy_static
 
 def main():
-    md = """
-```
-This is text that _should_ remain
-the **same** even with inline stuff
-```
-"""
-
-    node = markdown_to_html_node(md)
-    html = node.to_html()
-    print(repr(html))
+    root_folder = Path(__file__).parent.parent
+    src_folder = path.join(root_folder, "static")
+    dest_folder = path.join(root_folder, "public")
+    copy_static(src_folder, dest_folder)
 
 if __name__ == "__main__":
     main()
