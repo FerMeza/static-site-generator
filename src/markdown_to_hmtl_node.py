@@ -22,7 +22,8 @@ def block_to_html_node(block: str, block_type: BlockType) -> ParentNode:
             text = block.strip("```").lstrip("\n")
             print(repr(text.splitlines()))
             text_node = TextNode(text, TextType.CODE)
-            return text_node_to_html_node(text_node)
+            code = text_node_to_html_node(text_node)
+            return ParentNode("pre", [code])
         case BlockType.HEADING:
             splited = block.split(" ", 1)
             return ParentNode(
@@ -33,7 +34,7 @@ def block_to_html_node(block: str, block_type: BlockType) -> ParentNode:
             parent = ParentNode("ol",[])
             for line in block.split("\n"):
                 text = line.split(" ", 1)[1]
-                parent.children.extend(
+                parent.children.append(
                     ParentNode(
                         "li",
                         text_to_children(text))
@@ -45,15 +46,15 @@ def block_to_html_node(block: str, block_type: BlockType) -> ParentNode:
                 text_to_children(block),
             )
         case BlockType.QUOTE:
-            parent = ParentNode("blockquote")
             text = reduce(lambda x, y: x + y + "\n", map(lambda line : line[1:], block.splitlines()), "")
-            parent.children = text_to_children[text[:-1]]
+            children = text_to_children(text[:-1])
+            parent = ParentNode("blockquote", children)
             return parent
         case BlockType.UNORDERED_LIST:
             parent = ParentNode("ul",[])
             for line in block.split("\n"):
                 text = line.split(" ", 1)[1]
-                parent.children.extend(
+                parent.children.append(
                     ParentNode(
                         "li",
                         text_to_children(text))
