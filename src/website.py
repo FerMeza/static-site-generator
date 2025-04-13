@@ -18,7 +18,6 @@ def copy_static(src: str, dest: str) -> None:
     copy_static_recursive(src,dest)
 
 def copy_static_recursive(src : str, dest: str) -> None:
-    # and directories !
     src_files = listdir(src)
     for file_or_dir in src_files:
         full_path = path.join(src, file_or_dir)
@@ -56,3 +55,18 @@ def generate_page(from_path: str,
             makedirs(folder_dest)
         with open(dest_path, "w") as file:
             file.write(webpage)
+
+def generate_pages_recursive(dir_path_content : str,
+                             template_path : str,
+                             dest_dir_path : str) -> None:
+    src_files = listdir(dir_path_content)
+    for file_or_dir in src_files:
+        full_path = path.join(dir_path_content, file_or_dir)
+        if path.isfile(full_path):
+            filename = file_or_dir.split(".", 1)[0] + ".html"
+            dest_file_path = path.join(dest_dir_path, filename)
+            generate_page(full_path,template_path ,dest_file_path)
+        elif path.isdir(full_path):
+            full_dest = path.join(dest_dir_path, file_or_dir)
+            mkdir(full_dest)
+            generate_pages_recursive(full_path, template_path , full_dest)
