@@ -1,16 +1,18 @@
-from os import path
-from pathlib import Path
+from sys import argv
 from website import copy_static, generate_pages_recursive
 
 def main():
-    root_folder = Path(__file__).parent.parent
-    static_folder = path.join(root_folder, "static")
-    public_folder = path.join(root_folder, "public")
-    content_folder = path.join(root_folder, "content")
-    # Side effect! Deletes dest folder content before >:D
-    copy_static(static_folder, public_folder)
-    template_html = path.join(root_folder, "template.html")
-    generate_pages_recursive(content_folder, template_html, public_folder)
+    basepath = "/"
+    if len(argv) > 1:
+        basepath = argv[1]
+        print(basepath)
+    static_folder = "./static"
+    docs_folder = "./docs"
+    content_folder = "./content"
+    template_html = "./template.html"
+    # Side effect! Deletes dest folder content before!!!
+    copy_static(static_folder, docs_folder)
+    generate_pages_recursive(content_folder, template_html, docs_folder, basepath)
 
 if __name__ == "__main__":
     main()

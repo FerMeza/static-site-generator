@@ -40,7 +40,8 @@ def extract_title(markdown: str) -> None:
 
 def generate_page(from_path: str, 
                   template_path: str, 
-                  dest_path: str) -> None:
+                  dest_path: str,
+                  basepath) -> None:
     print(f"Generating page from {from_path} to {dest_path} using {template_path}")
     with open(from_path, 'r') as markdown_file, \
         open(template_path, 'r') as template_file:
@@ -49,7 +50,9 @@ def generate_page(from_path: str,
         html_str = markdown_to_html_node(markdown_str).to_html()
         title = extract_title(markdown_str)
         webpage = template_str.replace("{{ Title }}", title). \
-            replace("{{ Content }}", html_str)
+            replace("{{ Content }}", html_str). \
+            replace('href="/', f'href="{basepath}'). \
+            replace('src="/', f'src="{basepath}')
         folder_dest = path.dirname(dest_path)
         if not path.exists(folder_dest):
             makedirs(folder_dest)
@@ -58,15 +61,16 @@ def generate_page(from_path: str,
 
 def generate_pages_recursive(dir_path_content : str,
                              template_path : str,
-                             dest_dir_path : str) -> None:
+                             dest_dir_path : str,
+                             basepath : str) -> None:
     src_files = listdir(dir_path_content)
     for file_or_dir in src_files:
         full_path = path.join(dir_path_content, file_or_dir)
         if path.isfile(full_path):
             filename = file_or_dir.split(".", 1)[0] + ".html"
             dest_file_path = path.join(dest_dir_path, filename)
-            generate_page(full_path,template_path ,dest_file_path)
+            generate_page(full_path,template_path ,dest_file_path, basepath)
         elif path.isdir(full_path):
             full_dest = path.join(dest_dir_path, file_or_dir)
             mkdir(full_dest)
-            generate_pages_recursive(full_path, template_path , full_dest)
+            generate_pages_recursive(full_path, template_path , full_dest, basepath)
